@@ -1,0 +1,694 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>For Diyaa 🎀</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎀</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!--
+  ============================================================
+  ✏️  EDIT ME — everything you need to personalize is inside
+      the CONFIG object near the bottom, in the <script> tag.
+      Search for "STEP 1: EDIT YOUR CONFIG".
+  ============================================================
+-->
+
+<style>
+  :root{
+    --bg-1:#FFF3E9;
+    --bg-2:#FFE1EE;
+    --bg-3:#EAE1FF;
+    --ink:#4A3F55;
+    --ink-soft:#8577A0;
+    --pink:#FF6F91;
+    --pink-deep:#E85C82;
+    --yellow:#FFC145;
+    --purple:#8E7DBE;
+    --mint:#6FCF97;
+    --paper:#FFFDF8;
+    --paper-shadow:rgba(74,63,85,0.18);
+    --tape:#FFE28A;
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    font-family:'Quicksand', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 15% 20%, var(--bg-2) 0%, transparent 45%),
+      radial-gradient(circle at 85% 15%, var(--bg-3) 0%, transparent 45%),
+      radial-gradient(circle at 50% 90%, var(--bg-2) 0%, transparent 50%),
+      var(--bg-1);
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3{ font-family:'Fredoka', sans-serif; margin:0; font-weight:600; }
+  .script{ font-family:'Caveat', cursive; }
+
+  #app{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 16px;
+  }
+
+  /* floating ambient stickers */
+  #ambient{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+  #ambient span{
+    position:absolute; bottom:-10%; font-size:22px; opacity:0.55;
+    animation:floatUp linear infinite;
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,0.05));
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.55; } 90%{ opacity:0.5;}
+    100%{ transform:translateY(-115vh) rotate(25deg); opacity:0; }
+  }
+
+  .screen{
+    position:relative; z-index:1; width:100%; max-width:480px;
+    display:none; animation:screenIn 0.5s ease;
+  }
+  .screen.active{ display:block; }
+  @keyframes screenIn{
+    from{ opacity:0; transform:translateY(14px) scale(0.98); }
+    to{ opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  .card{
+    background:var(--paper); border-radius:26px; padding:34px 26px;
+    box-shadow:0 18px 40px var(--paper-shadow), 0 2px 0 rgba(255,255,255,0.6) inset;
+    position:relative;
+  }
+  .tape{
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%) rotate(-3deg);
+    width:90px; height:30px; background:var(--tape); opacity:0.85; border-radius:2px;
+    box-shadow:0 3px 6px rgba(0,0,0,0.12);
+  }
+  .tape::before{
+    content:''; position:absolute; inset:0;
+    background:repeating-linear-gradient(45deg, rgba(255,255,255,0.35) 0 2px, transparent 2px 6px);
+  }
+
+  .btn{
+    font-family:'Fredoka', sans-serif; font-weight:600; font-size:16px;
+    border:none; border-radius:999px; padding:14px 26px; cursor:pointer;
+    color:#fff; background:var(--pink); box-shadow:0 8px 18px rgba(255,111,145,0.35);
+    transition:transform 0.15s ease, box-shadow 0.15s ease;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn:hover{ transform:translateY(-2px); box-shadow:0 12px 22px rgba(255,111,145,0.42); }
+  .btn:active{ transform:translateY(0) scale(0.98); }
+  .btn.secondary{ background:var(--paper); color:var(--pink-deep); box-shadow:0 0 0 2px var(--pink) inset; }
+  .btn.block{ width:100%; }
+
+  /* ---------- LOCK ---------- */
+  #screen-lock .lock-emoji{
+    font-size:52px; text-align:center; display:block; margin-bottom:6px;
+    animation:wiggle 3.5s ease-in-out infinite;
+  }
+  @keyframes wiggle{ 0%,100%{ transform:rotate(0deg);} 50%{ transform:rotate(-6deg);} }
+  #screen-lock h1{ text-align:center; font-size:26px; margin-bottom:6px; }
+  #screen-lock p.sub{ text-align:center; color:var(--ink-soft); margin:0 0 22px; font-size:15px; }
+  #passcode-input{
+    width:100%; text-align:center; letter-spacing:2px;
+    font-family:'Quicksand',sans-serif; font-weight:600; font-size:18px;
+    padding:14px 16px; border-radius:16px; border:2px solid #F0E4F5;
+    background:#FFFCF7; color:var(--ink); outline:none; transition:border-color 0.2s ease;
+  }
+  #passcode-input:focus{ border-color:var(--pink); }
+  .shake{ animation:shake 0.4s ease; }
+  @keyframes shake{
+    10%,90%{ transform:translateX(-2px);} 20%,80%{ transform:translateX(4px);}
+    30%,50%,70%{ transform:translateX(-8px);} 40%,60%{ transform:translateX(8px);}
+  }
+  #lock-error{ color:var(--pink-deep); font-size:13px; text-align:center; height:18px; margin-top:10px; }
+  #hint-toggle{
+    display:block; text-align:center; margin-top:16px; color:var(--purple);
+    font-size:14px; font-weight:600; cursor:pointer; text-decoration:underline; background:none; border:none;
+  }
+  #hint-text{
+    text-align:center; font-size:14px; color:var(--ink-soft); margin-top:10px;
+    display:none; background:#FBF3FF; border-radius:12px; padding:10px 14px;
+  }
+
+  /* ---------- WELCOME ---------- */
+  #screen-welcome{ text-align:center; }
+  #screen-welcome .cake{ font-size:56px; display:block; margin-bottom:10px; }
+  #screen-welcome h1{ font-size:24px; margin-bottom:10px; line-height:1.35; }
+  #screen-welcome p{ color:var(--ink-soft); font-size:15px; line-height:1.6; margin-bottom:26px; }
+
+  /* ---------- MESSAGES (story style) ---------- */
+  .progress-row{ display:flex; gap:6px; margin-bottom:18px; }
+  .progress-seg{ flex:1; height:5px; border-radius:99px; background:#F0E4E9; overflow:hidden; }
+  .progress-seg > i{ display:block; height:100%; width:0%; background:var(--pink); border-radius:99px; transition:width 0.25s ease; }
+  .progress-seg.done > i{ width:100%; }
+  #msg-index{ font-size:13px; color:var(--ink-soft); font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; display:block; }
+  #msg-text{
+    font-family:'Caveat', cursive; font-size:25px; line-height:1.5; color:var(--ink);
+    min-height:160px; display:flex; align-items:center; white-space:pre-line;
+  }
+  .tap-zones{ position:absolute; inset:0; display:flex; z-index:2; }
+  .tap-zones div{ flex:1; }
+  .msg-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:22px; }
+  .icon-btn{
+    width:44px; height:44px; border-radius:50%; border:none; background:#FBF3FF;
+    color:var(--purple); font-size:18px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:transform 0.15s ease;
+  }
+  .icon-btn:hover{ transform:scale(1.08); }
+  .icon-btn:disabled{ opacity:0.3; cursor:default; transform:none; }
+
+  /* ---------- FINAL WISH (big celebratory) ---------- */
+  #screen-finalwish{ text-align:center; }
+  #screen-finalwish .sparkle{ font-size:44px; margin-bottom:6px; }
+  #screen-finalwish p{
+    font-family:'Caveat', cursive; font-size:28px; line-height:1.5; color:var(--pink-deep);
+    margin:0 0 24px;
+  }
+
+  /* ---------- TRANSITION ---------- */
+  #screen-transition{ text-align:center; }
+  #screen-transition .em{ font-size:44px; margin-bottom:10px; }
+  #screen-transition h2{ font-size:23px; line-height:1.4; margin-bottom:24px; }
+
+  /* ---------- PHOTOS ---------- */
+  .polaroid{
+    background:#fff; padding:14px 14px 0; border-radius:8px;
+    box-shadow:0 14px 28px var(--paper-shadow); transform:rotate(-1.5deg);
+  }
+  .polaroid .photo-frame{
+    width:100%; aspect-ratio:1/1; border-radius:4px; overflow:hidden;
+    background:linear-gradient(135deg, var(--bg-2), var(--bg-3));
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .polaroid img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-placeholder{ text-align:center; color:var(--ink-soft); font-size:13px; padding:16px; font-weight:600; }
+  .polaroid .caption{ font-family:'Caveat', cursive; font-size:22px; text-align:center; padding:14px 6px 18px; color:var(--ink); }
+  #photo-counter{ text-align:center; font-size:13px; color:var(--ink-soft); margin-top:14px; font-weight:600; letter-spacing:1px; }
+  .photo-dots{ display:flex; justify-content:center; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .photo-dots span{ width:6px; height:6px; border-radius:50%; background:#EBDCE2; transition:all 0.2s ease; }
+  .photo-dots span.active{ background:var(--pink); width:16px; border-radius:4px; }
+  .photo-nav{ display:flex; justify-content:space-between; margin-top:16px; }
+
+  /* ---------- MUSIC ---------- */
+  #screen-music{ text-align:center; }
+  .vinyl-wrap{ display:flex; justify-content:center; margin:8px 0 22px; }
+  .vinyl{
+    width:170px; height:170px; border-radius:50%;
+    background:
+      radial-gradient(circle at center, var(--paper) 0 12%, transparent 12.5%),
+      repeating-radial-gradient(circle at center, #3a3050 0, #3a3050 2px, #453a5c 2px, #453a5c 4px);
+    box-shadow:0 14px 30px rgba(0,0,0,0.25);
+    display:flex; align-items:center; justify-content:center; position:relative;
+  }
+  .vinyl::after{ content:'♪'; font-size:26px; color:var(--pink); position:absolute; }
+  .vinyl.spin{ animation:spin 3.5s linear infinite; }
+  @keyframes spin{ from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
+  #song-title{ font-size:19px; margin-bottom:2px; }
+  #song-artist{ color:var(--ink-soft); font-size:14px; margin-bottom:20px; }
+  .play-btn{
+    width:64px; height:64px; border-radius:50%; border:none; background:var(--pink);
+    color:#fff; font-size:22px; box-shadow:0 10px 20px rgba(255,111,145,0.4);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; margin:0 auto;
+    transition:transform 0.15s ease;
+  }
+  .play-btn:hover{ transform:scale(1.06); }
+  .bars{ display:flex; align-items:flex-end; justify-content:center; gap:4px; height:26px; margin-top:18px; }
+  .bars i{ width:4px; background:var(--purple); border-radius:2px; height:6px; opacity:0.4; }
+  .bars.playing i{ animation:bar 1s ease-in-out infinite; opacity:1; }
+  .bars i:nth-child(1){ animation-delay:0s; } .bars i:nth-child(2){ animation-delay:0.15s; }
+  .bars i:nth-child(3){ animation-delay:0.3s; } .bars i:nth-child(4){ animation-delay:0.45s; }
+  .bars i:nth-child(5){ animation-delay:0.6s; }
+  @keyframes bar{ 0%,100%{ height:6px;} 50%{ height:24px;} }
+
+  /* ---------- WISHES ---------- */
+  #screen-wishes h2{ text-align:center; font-size:24px; }
+  #screen-wishes p.sub{ text-align:center; color:var(--ink-soft); margin:6px 0 22px; font-size:14px; }
+  .wish-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:22px; }
+  .wish-card{ aspect-ratio:1/1; border-radius:18px; cursor:pointer; position:relative; perspective:800px; }
+  .wish-inner{
+    position:relative; width:100%; height:100%; transition:transform 0.6s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+  }
+  .wish-card.open .wish-inner{ transform:rotateY(180deg); }
+  .wish-face{
+    position:absolute; inset:0; border-radius:18px; backface-visibility:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; padding:10px; text-align:center;
+  }
+  .wish-front{ background:linear-gradient(160deg, #FFF0D6, #FFE1EE); box-shadow:0 8px 16px var(--paper-shadow); }
+  .wish-front .num{ font-size:11px; font-weight:700; color:var(--ink-soft); letter-spacing:1px; margin-top:4px; }
+  .wish-front .emoji{ font-size:30px; }
+  .wish-back{
+    background:var(--paper); transform:rotateY(180deg); box-shadow:0 8px 16px var(--paper-shadow);
+    font-family:'Caveat', cursive; font-size:15px; line-height:1.3; color:var(--ink); overflow-y:auto;
+  }
+  #wish-count{ text-align:center; font-size:13px; color:var(--ink-soft); margin-bottom:14px; font-weight:600; }
+
+  /* ---------- FINAL ---------- */
+  #screen-final{ text-align:center; }
+  #screen-final .balloons{ font-size:42px; margin-bottom:8px; }
+  #screen-final h1{ font-size:27px; margin-bottom:14px; }
+  #screen-final p{ font-size:17px; line-height:1.65; color:var(--ink); margin-bottom:18px; }
+  #screen-final .sign{ font-family:'Caveat', cursive; font-size:30px; color:var(--pink-deep); margin-top:6px; }
+
+  /* confetti */
+  .confetti{ position:fixed; top:-10px; width:9px; height:14px; z-index:50; pointer-events:none; animation:confettiFall linear forwards; }
+  @keyframes confettiFall{ to{ transform:translateY(105vh) rotate(600deg); opacity:0.9; } }
+
+  footer.credit{ text-align:center; font-size:11px; color:var(--ink-soft); opacity:0.6; margin-top:18px; }
+
+  @media (max-width:380px){
+    .card{ padding:26px 18px; }
+    #msg-text{ font-size:21px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="ambient"></div>
+
+<div id="app">
+
+  <!-- 1. LOCK -->
+  <section class="screen active" id="screen-lock">
+    <div class="card">
+      <div class="tape"></div>
+      <span class="lock-emoji">🔒</span>
+      <h1 id="lock-title">This is just for you</h1>
+      <p class="sub" id="lock-sub">Enter the passcode to open it 💌</p>
+      <input id="passcode-input" type="text" autocomplete="off" placeholder="passcode" />
+      <button class="btn block" style="margin-top:14px;" onclick="tryUnlock()">Unlock 🔓</button>
+      <div id="lock-error"></div>
+      <button id="hint-toggle" onclick="toggleHint()">Need a hint?</button>
+      <div id="hint-text"></div>
+    </div>
+  </section>
+
+  <!-- 2. WELCOME (hero message) -->
+  <section class="screen" id="screen-welcome">
+    <div class="card">
+      <div class="tape"></div>
+      <span class="cake">🎂</span>
+      <h1 id="welcome-title"></h1>
+      <p id="welcome-sub"></p>
+      <button class="btn block" onclick="goTo('messages')">Tap to begin ✨</button>
+    </div>
+  </section>
+
+  <!-- 3. MESSAGES -->
+  <section class="screen" id="screen-messages">
+    <div class="progress-row" id="progress-row"></div>
+    <div class="card" style="position:relative;">
+      <div class="tape"></div>
+      <div class="tap-zones">
+        <div onclick="prevMessage()"></div>
+        <div onclick="nextMessage()"></div>
+      </div>
+      <span id="msg-index"></span>
+      <div id="msg-text"></div>
+    </div>
+    <div class="msg-nav">
+      <button class="icon-btn" id="msg-prev" onclick="prevMessage()">←</button>
+      <button class="btn secondary" id="msg-next-btn" onclick="nextMessage()">Next →</button>
+      <button class="icon-btn" onclick="nextMessage()">→</button>
+    </div>
+  </section>
+
+  <!-- 4. FINAL WISH -->
+  <section class="screen" id="screen-finalwish">
+    <div class="card">
+      <div class="tape"></div>
+      <div class="sparkle">🥳🎉🥳</div>
+      <p id="finalwish-text"></p>
+      <button class="btn block" onclick="goTo('transition')">Continue →</button>
+    </div>
+  </section>
+
+  <!-- 5. TRANSITION -->
+  <section class="screen" id="screen-transition">
+    <div class="card">
+      <div class="tape"></div>
+      <div class="em">✨🎁✨</div>
+      <h2 id="transition-text"></h2>
+      <button class="btn block" onclick="goTo('wishes')">Open your wishes →</button>
+    </div>
+  </section>
+
+  <!-- 6. WISHES -->
+  <section class="screen" id="screen-wishes">
+    <div class="card">
+      <div class="tape"></div>
+      <h2 id="wishes-title">6 wishes for you ✨</h2>
+      <p class="sub">Tap each one to open it</p>
+      <div id="wish-count"></div>
+      <div class="wish-grid" id="wish-grid"></div>
+      <button class="btn block" onclick="goTo('photos')">Continue to our memories →</button>
+    </div>
+  </section>
+
+  <!-- 7. PHOTOS -->
+  <section class="screen" id="screen-photos">
+    <div class="polaroid">
+      <div class="photo-frame" id="photo-frame"></div>
+      <div class="caption" id="photo-caption"></div>
+    </div>
+    <div id="photo-counter"></div>
+    <div class="photo-dots" id="photo-dots"></div>
+    <div class="photo-nav">
+      <button class="icon-btn" id="photo-prev" onclick="prevPhoto()">←</button>
+      <button class="btn" id="photo-next-btn" onclick="nextPhoto()">Next →</button>
+      <button class="icon-btn" onclick="nextPhoto()">→</button>
+    </div>
+  </section>
+
+  <!-- 8. MUSIC -->
+  <section class="screen" id="screen-music">
+    <div class="card">
+      <div class="tape"></div>
+      <div class="vinyl-wrap"><div class="vinyl" id="vinyl"></div></div>
+      <div id="song-title"></div>
+      <div id="song-artist"></div>
+      <button class="play-btn" id="play-btn" onclick="toggleSong()">▶</button>
+      <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i></div>
+      <audio id="audio" preload="none"></audio>
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+      <button class="btn block" onclick="goTo('final')">Continue →</button>
+    </div>
+  </section>
+
+  <!-- 9. FINAL -->
+  <section class="screen" id="screen-final">
+    <div class="card">
+      <div class="tape"></div>
+      <div class="balloons">🎈🎉🎈</div>
+      <h1 id="final-title"></h1>
+      <p id="final-text"></p>
+      <div class="sign" id="final-sign"></div>
+    </div>
+    <footer class="credit">made with love, just for you</footer>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   STEP 1: EDIT YOUR CONFIG
+   Everything about the site lives in this object. Change the
+   text below, save the file, and you're done — no coding needed.
+   ============================================================ */
+const CONFIG = {
+
+  // --- 1. Lock screen ---
+  passcode: "Chakudiii",
+  passcodeHint: "Hint: what's the cutest name I've given you? 🤍",
+  lockTitle: "This is just for you",
+  lockSubtitle: "Enter the passcode to open it 💌",
+
+  // --- 2. Welcome screen (hero message, shown right after unlocking) ---
+  welcomeTitle: "Its uska bday, to whom God has no other choice to sent to me ...Its You my Super Special 🎂",
+  welcomeSubtitle: "I made you a little something. Tap through, take your time, and enjoy 🤍",
+
+  // --- 3. Personalised messages (shown one at a time, tap Next) ---
+  messages: [
+    "oyee...pehle toh tennu kisidi najar na lage chashmish 😊. Duji Its your day so isko dekhke na bas muskurate rehna apne dil se mann se, 🤗🤩",
+    "Daant nikal ke bhi has sakti hai 😁",
+    "Bahot socha kahi time se plan karra ki kya special karu tere liye coz tu naraj bhi he , and here i go. Aur jab me ye bana raha tha bahot muskura raha tha , bahot excite hora tujhe dikhane ki kitna mast smile karegi tu isko dekh ke ❤️👌",
+    "Bakuu...I am sorry ne have to unblock kar de, yaar aatlu badhu pan su naraj rehvu , meri eklauti bestest friend jiski jagah koi le hi nahi sakta ....yaar bav icha che malvani ne tara thi BA ni guidance levani...",
+    "Aur isiliye\n.\n.\n.\n>\n>\n>\n:>)\n>>>...",
+    "Guesss kncok knock ..\nDring drinng....\nTu kuch ni bolegi kyunki me kuch ni sunn raha abb kyuki me to me hu\n.\n.\n.",
+    "oyeee and YK mujhe party chaiye iss baar... mee uske sath sath kuch mitha bi add kar raha hu ...Tiramisu chhiye mujhe teri tarf se okay 😋"
+  ],
+
+  // --- 4. Final wish (big celebratory line after the messages) ---
+  finalWishText: "A Veryyyyy Happiest Bday my Sweetest, Gorgeous, the One and Only Diya Daksheshbhai Doshi...urf...Chakudiiiii 🤪🥳🥳🤠🙈🙉🙊🐕‍🦺🎂🍰🍥",
+
+  // --- 5. Transition line before the wishes ---
+  transitionText: "Now its time for some good wishes...",
+
+  // --- 6. 6 wishes (tap each card to reveal) ---
+  // NOTE: you mentioned a screenshot with the exact wish wording — these were
+  // pulled from your earlier screen recording. Swap the text below if the
+  // screenshot has different wording.
+  wishes: [
+    { emoji: "🌞", text: "The way you're smiling right at the moment, just smiling the same every single time." },
+    { emoji: "🌸", text: "The partner you want will be soon yours and thats my wish too.." },
+    { emoji: "💕", text: "Life me itni khush rahe ki meri yaad bhi naa aaye toh bhi chalega bass khush rahe." },
+    { emoji: "☕", text: "Just like the morning becomes better with coffee...teri har subha cappuccino ho jaye." },
+    { emoji: "🐾", text: "You'll achieve everything which u wished or just randomly thought to have someday." },
+    { emoji: "✨", text: "Last but not least, at the end of whatever jo bhi tu kare, i really really wish ki you'll get PEACE. And also don't trust some random tarot card readers plzzzzzzz" }
+  ],
+
+  // --- 7. Photo memories (10 photos with captions, in order) ---
+  photos: [
+    { src: "photos/1.jpeg", caption: "Finally mene jese tese manaya thaa.." },
+    { src: "photos/2.jpeg", caption: "All I want is this bakchodi with youuu" },
+    { src: "photos/3.jpeg", caption: "...Bhuli to nahi na kitne famous influencers the hum vaha pe" },
+    { src: "photos/4.jpeg", caption: "Wese ache lagre na sathme dono..." },
+    { src: "photos/5.jpeg", caption: "Oxygen park whennn ???" },
+    { src: "photos/6.jpeg", caption: "Agli baar galti karu to in nails se gala daba dena" },
+    { src: "photos/7.jpeg", caption: "I hope ye surprise dekhkar ese hi mushkura rahi hogi aap" },
+    { src: "photos/8.jpeg", caption: "But me to me huuu 🤣🤣" },
+    { src: "photos/9.jpeg", caption: "old good Bachchodiiii...but is navratri ye ho jaye vapisss 👉👈" },
+    { src: "photos/10.jpeg", caption: "How can I forget thisss - Pretty womann dekho dekho naaa" }
+  ],
+
+  // --- 8. Song (put an mp3 file next to this index.html and name it below) ---
+  song: {
+    src: "song.mp3",
+    title: "Our Song",
+    artist: "Diyuuu 💛"
+  },
+
+  // --- 9. Final closing screen ---
+  finalTitle: "Come soon 🤍",
+  finalText: "Stay happy. Smiling always. m there.",
+  finalSignature: "— Diyuuu 💛"
+};
+
+/* ============================================================
+   Everything below this line makes the site work.
+   You shouldn't need to touch it — but feel free to look!
+   ============================================================ */
+
+document.getElementById('lock-title').textContent = CONFIG.lockTitle;
+document.getElementById('lock-sub').textContent = CONFIG.lockSubtitle;
+document.getElementById('hint-text').textContent = CONFIG.passcodeHint;
+document.getElementById('welcome-title').textContent = CONFIG.welcomeTitle;
+document.getElementById('welcome-sub').textContent = CONFIG.welcomeSubtitle;
+document.getElementById('finalwish-text').textContent = CONFIG.finalWishText;
+document.getElementById('transition-text').textContent = CONFIG.transitionText;
+document.getElementById('song-title').textContent = CONFIG.song.title;
+document.getElementById('song-artist').textContent = CONFIG.song.artist;
+document.getElementById('wishes-title').textContent = `${CONFIG.wishes.length} wishes for you ✨`;
+document.getElementById('final-title').textContent = CONFIG.finalTitle;
+document.getElementById('final-text').textContent = CONFIG.finalText;
+document.getElementById('final-sign').textContent = CONFIG.finalSignature;
+document.getElementById('audio').src = CONFIG.song.src;
+
+// ---- ambient floating stickers ----
+(function ambient(){
+  const wrap = document.getElementById('ambient');
+  const stickers = ['✨','💛','🌸','⭐','💗','🎈'];
+  for(let i=0;i<14;i++){
+    const s = document.createElement('span');
+    s.textContent = stickers[Math.floor(Math.random()*stickers.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.fontSize = (14+Math.random()*16)+'px';
+    s.style.animationDuration = (10+Math.random()*12)+'s';
+    s.style.animationDelay = (Math.random()*14)+'s';
+    wrap.appendChild(s);
+  }
+})();
+
+// ---- screen navigation ----
+function goTo(name){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ---- LOCK ----
+function tryUnlock(){
+  const input = document.getElementById('passcode-input');
+  const val = input.value.trim().toLowerCase();
+  const target = CONFIG.passcode.trim().toLowerCase();
+  if(val === target){
+    burstConfetti();
+    setTimeout(()=> goTo('welcome'), 250);
+  } else {
+    const card = document.querySelector('#screen-lock .card');
+    card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    document.getElementById('lock-error').textContent = "Hmm, that's not quite it — try again 🤍";
+  }
+}
+document.getElementById('passcode-input').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') tryUnlock();
+});
+function toggleHint(){
+  const el = document.getElementById('hint-text');
+  el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+}
+
+// ---- CONFETTI ----
+function burstConfetti(){
+  const colors = ['#FF6F91','#FFC145','#8E7DBE','#6FCF97','#FF9AB5'];
+  for(let i=0;i<60;i++){
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*100+'vw';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDuration = (2+Math.random()*1.8)+'s';
+    c.style.opacity = 0.85;
+    document.body.appendChild(c);
+    setTimeout(()=> c.remove(), 4000);
+  }
+}
+
+// ---- MESSAGES ----
+let msgIdx = 0;
+function renderProgress(){
+  const row = document.getElementById('progress-row');
+  row.innerHTML = '';
+  CONFIG.messages.forEach((_,i)=>{
+    const seg = document.createElement('div');
+    seg.className = 'progress-seg' + (i < msgIdx ? ' done' : '');
+    const bar = document.createElement('i');
+    if(i === msgIdx) bar.style.width = '100%';
+    seg.appendChild(bar);
+    row.appendChild(seg);
+  });
+}
+function renderMessage(){
+  document.getElementById('msg-index').textContent = `Part ${msgIdx+1} of ${CONFIG.messages.length}`;
+  document.getElementById('msg-text').textContent = CONFIG.messages[msgIdx];
+  document.getElementById('msg-prev').disabled = (msgIdx === 0);
+  const isLast = msgIdx === CONFIG.messages.length - 1;
+  document.getElementById('msg-next-btn').textContent = isLast ? 'Continue →' : 'Next →';
+  renderProgress();
+}
+function nextMessage(){
+  if(msgIdx < CONFIG.messages.length - 1){ msgIdx++; renderMessage(); }
+  else { goTo('finalwish'); }
+}
+function prevMessage(){
+  if(msgIdx > 0){ msgIdx--; renderMessage(); }
+}
+renderMessage();
+
+// ---- PHOTOS ----
+let photoIdx = 0;
+function renderPhotoDots(){
+  const wrap = document.getElementById('photo-dots');
+  wrap.innerHTML = '';
+  CONFIG.photos.forEach((_,i)=>{
+    const d = document.createElement('span');
+    if(i === photoIdx) d.classList.add('active');
+    wrap.appendChild(d);
+  });
+}
+function renderPhoto(){
+  const p = CONFIG.photos[photoIdx];
+  const frame = document.getElementById('photo-frame');
+  frame.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = p.src;
+  img.alt = p.caption || '';
+  img.onerror = function(){
+    frame.innerHTML = '<div class="photo-placeholder">📷<br>Add "'+p.src+'" to the photos folder</div>';
+  };
+  frame.appendChild(img);
+  document.getElementById('photo-caption').textContent = p.caption || '';
+  document.getElementById('photo-counter').textContent = `${photoIdx+1} / ${CONFIG.photos.length}`;
+  document.getElementById('photo-prev').disabled = (photoIdx === 0);
+  const isLast = photoIdx === CONFIG.photos.length - 1;
+  document.getElementById('photo-next-btn').textContent = isLast ? 'Continue to our song →' : 'Next →';
+  renderPhotoDots();
+}
+function nextPhoto(){
+  if(photoIdx < CONFIG.photos.length - 1){ photoIdx++; renderPhoto(); }
+  else { goTo('music'); }
+}
+function prevPhoto(){
+  if(photoIdx > 0){ photoIdx--; renderPhoto(); }
+}
+renderPhoto();
+
+// ---- MUSIC ----
+const audioEl = document.getElementById('audio');
+let playing = false;
+function toggleSong(){
+  const btn = document.getElementById('play-btn');
+  const vinyl = document.getElementById('vinyl');
+  const bars = document.getElementById('bars');
+  if(!playing){
+    audioEl.play().catch(()=>{
+      document.getElementById('song-artist').textContent = 'Add "'+CONFIG.song.src+'" next to index.html to hear it';
+    });
+    btn.textContent = '❚❚';
+    vinyl.classList.add('spin');
+    bars.classList.add('playing');
+    playing = true;
+  } else {
+    audioEl.pause();
+    btn.textContent = '▶';
+    vinyl.classList.remove('spin');
+    bars.classList.remove('playing');
+    playing = false;
+  }
+}
+audioEl.addEventListener('ended', ()=>{
+  playing = false;
+  document.getElementById('play-btn').textContent = '▶';
+  document.getElementById('vinyl').classList.remove('spin');
+  document.getElementById('bars').classList.remove('playing');
+});
+
+// ---- WISHES ----
+let openedCount = 0;
+function renderWishes(){
+  const grid = document.getElementById('wish-grid');
+  grid.innerHTML = '';
+  CONFIG.wishes.forEach((w,i)=>{
+    const card = document.createElement('div');
+    card.className = 'wish-card';
+    card.innerHTML = `
+      <div class="wish-inner">
+        <div class="wish-face wish-front">
+          <div class="emoji">${w.emoji}</div>
+          <div class="num">WISH #${i+1}</div>
+        </div>
+        <div class="wish-face wish-back">${w.text}</div>
+      </div>`;
+    card.addEventListener('click', ()=>{
+      if(!card.classList.contains('open')){
+        card.classList.add('open');
+        openedCount++;
+        updateWishCount();
+        if(openedCount === CONFIG.wishes.length) burstConfetti();
+      }
+    });
+    grid.appendChild(card);
+  });
+  updateWishCount();
+}
+function updateWishCount(){
+  document.getElementById('wish-count').textContent = `${openedCount} of ${CONFIG.wishes.length} opened`;
+}
+renderWishes();
+
+// ---- FINAL WISH screen confetti on arrival ----
+document.querySelector('#screen-finalwish .btn').addEventListener('click', ()=>{}, {once:true});
+</script>
+</body>
+</html>
