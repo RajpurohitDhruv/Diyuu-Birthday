@@ -1,8 +1,8 @@
-# 🎀 Pikuuu's Birthday Surprise Site
+# 🎀 Diyuu's Birthday Surprise Site
 
 Already filled in with your real content and her 10 photos. The flow is:
 
-1. Passcode lock (`Pikuuu`) + hint
+1. Passcode lock (`Chakudiii`) + hint
 2. Hero welcome message
 3. Your personalised messages, one at a time
 4. The big final wish line
